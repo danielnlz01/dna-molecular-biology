@@ -1,0 +1,217 @@
+---
+title: ""
+author: ""
+date: "9/4/2021"
+output: html_document
+
+---
+
+##Secuencia DNA
+```{r}
+dna <- c("A", "T", "C", "G", "-", "N")
+seq_dna <- sample(dna, 21, replace= TRUE)
+seq_dna
+```
+
+##Secuencia RNA
+```{r}
+rna <- c("A", "U", "C", "G", "-", "N")
+seq_rna <- sample(rna, 21, replace= TRUE)
+seq_rna
+```
+
+## Ejercicio 2
+```{r}
+ejercicio2 <- function(dna)
+{
+  length(seq_dna)
+}
+  
+ejercicio2(seq_dna)
+```
+
+##Ejericio 3
+```{r}
+ejercicio3 <- function(dna)
+{
+  A <- sum(seq_dna %in% c('A'))/length(seq_dna)*100
+  T <- sum(seq_dna %in% c('T'))/length(seq_dna)*100
+  G <- sum(seq_dna %in% c('G'))/length(seq_dna)*100
+  C <- sum(seq_dna %in% c('C'))/length(seq_dna)*100
+  
+  cat("A", A, "%\nT", T, "%\nG", G, "%\nC", C, "%")
+}
+
+ejercicio3(seq_dna)
+```
+
+## Ejercicio 4
+```{r}
+dna2rna <- function(dna)
+{
+  rna <- mgsub(dna, c("A", "C", "G", "T"), c("U", "G", "C", "A"))
+  rna
+}
+
+dna2rna(seq_dna)
+```
+
+##Ejercicio 5
+```{r}
+rna2protein <- function(rna)
+{
+  if (length(rna) %% 3 == 0)
+  {
+    contador <- 0
+    tablaBases <- c(
+      "UUU", "Fenilalanina",
+      "UUC", "Fenilalanina",
+      "UUA", "Leucina",
+      "UUG", "Leucina",
+      "CUU", "Leucina",
+      "CUC", "Leucina",
+      "CUA", "Leucina",
+      "CUG", "Leucina",
+      "AUU", "Isoleucina",
+      "AUC", "Isoleucina",
+      "AUA", "Isoleucina",
+      "AUG", "Metionina*",
+      "GUU", "Valina",
+      "GUC", "Valina",
+      "GUA", "Valina",
+      "GUG", "Valina",
+      "UCU", "Serina",
+      "UCC", "Serina",
+      "UCA", "Serina",
+      "UCG", "Serina",
+      "CCU", "Prolina",
+      "CCC", "Prolina",
+      "CCA", "Prolina",
+      "CCG", "Prolina",
+      "ACU", "Treonina",
+      "ACC", "Treonina",
+      "ACA", "Treonina",
+      "ACG", "Treonina",
+      "GCU", "Alanina",
+      "GCC", "Alanina",
+      "GCA", "Alanina",
+      "GCG", "Alanina",
+      "UAU", "Tirosina",
+      "UAC", "Tirosina",
+      "UAA", "STOP",
+      "UAG", "STOP",
+      "CAU", "Histidina",
+      "CAC", "Histidina",
+      "CAA", "Glutamina",
+      "CAG", "Glutamina",
+      "AAU", "Asparagina",
+      "AAC", "Asparagina",
+      "AAA", "Lisina",
+      "AAG", "Lisina",
+      "GAU", "Ácido Aspártico",
+      "GAC", "Ácido Aspártico",
+      "GAA", "Ácido Glutámico",
+      "GAG", "Ácido Glutámico",
+      "UGU", "Cisteína",
+      "UGC", "Cisteína",
+      "UGA", "STOP",
+      "UGG", "Triptófano",
+      "CGU", "Arginina",
+      "CGC", "Arginina",
+      "CGA", "Arginina",
+      "CGG", "Arginina",
+      "AGU", "Serina",
+      "AGC", "Serina",
+      "AGA", "Arginina",
+      "AGG", "Arginina",
+      "GGU", "Glicina",
+      "GGC", "Glicina",
+      "GGA", "Glicina",
+      "GGG", "Glicina"
+    )
+    matrixBases <- matrix(tablaBases, 64, 2, byrow = TRUE)
+    for (i in seq(1, length(rna) - 2, by = 3))
+    {
+      bases <- c(rna[i:(i+2)])
+      contador <- contador + 1
+      cat("El codón #", contador, "a identificar:", bases, "\n")
+      bases <- paste(bases[1], bases[2], bases[3], sep = "")
+      for (j in 1:64)
+      {
+        if (bases == matrixBases[j, 1])
+        {
+          cat("Se traduce al siguiente aminoácido:", matrixBases[j, 2], "\n\n")
+        }
+        else if (grepl("N", bases) == TRUE | grepl("-", bases) == TRUE)
+        {
+          cat("No se puede traducir a un aminoácido, contiene una base desconocida. \n\n")
+          break
+        }
+      }  
+    }
+  }
+  else
+  {
+    print("Faltan/Sobran bases!")
+  }
+}
+
+rna2protein(seq_rna)
+```
+
+## Ejercicio 6
+```{r}
+dnainverso <- function(dna)
+{
+  # primero se intentó con paquete stringi, pero era más sencillo con 'rev'
+  
+  # dnastr <- ""
+  # for (i in 1:length(dna))
+  # {
+  #   dnastr <- paste(dnastr, dna[i])
+  # }
+  # inversa <- stri_reverse(dnastr)  
+  inversa <- rev(dna)
+  cat("La hebra directa (5' a 3'):", dna, "\nSe convertirá a la inversa (3' a 5'):", inversa)
+}
+
+dnainverso(seq_dna)
+```
+
+## Ejercicio 7
+```{r}
+hebra_complementaria<- function(hebra)
+{
+
+  complementario <- mgsub(hebra, c("A", "C", "G", "T"), c("T", "G", "C", "A"))
+  cat("La hebra directa (5' a 3'):", hebra, "\nSe convertirá a la complementaria (3' a 5'):", complementario)
+  global_complementaria <<- complementario
+}
+
+hebra_complementaria(seq_dna)
+```
+
+## Ejercicio 8
+```{r}
+comple_inversa<- function(inversa)
+{
+
+  complementario <- mgsub(inversa, c("A", "C", "G", "T"), c("T", "G", "C", "A"))
+  complementario_inversa <- rev(complementario)
+  cat("La hebra complementaria (3' a 5'):", complementario, "\nSe convertirá a (5' a 3'):", complementario_inversa)
+}
+
+comple_inversa(seq_dna)
+```
+
+## Ejercicio 8 v2
+```{r}
+comp2inv <- function(complementaria)
+{
+  compInv <- rev(complementaria)
+  cat("La hebra complementaria (3' a 5'):", complementaria, "\nSe convertirá a (5' a 3'):", compInv)
+}
+
+comp2inv(global_complementaria)
+```
+
